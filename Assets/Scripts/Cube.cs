@@ -23,10 +23,10 @@ public class Cube : MonoBehaviour
         {
             Split();
         }
-        //else
-        //{
-        //    NotifyAndDestroy();
-        //}
+        else
+        {
+            NotifyAndDestroy();
+        }
     }
 
     public void Initialize(float splitChance)
