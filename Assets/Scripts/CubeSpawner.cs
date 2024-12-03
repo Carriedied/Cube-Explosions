@@ -35,17 +35,20 @@ public class CubeSpawner : MonoBehaviour
         splitCube.Split -= HandleCubeSplit;
         splitCube.Destroyed -= HandleCubeDestroyed;
 
+        Vector3 changeScale = splitCube.transform.localScale / splitCube.DecreaseValue;
+        float changeSplitChance = splitCube.SplitChance / splitCube.DecreaseChance; 
+
         _activeCubes.Remove(splitCube);
 
-        SpawnCubes(splitCube.transform.position,
-                   splitCube.transform.localScale / splitCube.DecreaseValue,
-                   splitCube.SplitChance / splitCube.DecreaseChance);
+        SpawnCubes(splitCube.transform.position, changeScale, changeSplitChance);
     }
 
     private void HandleCubeDestroyed(Cube destroyedCube)
     {
         destroyedCube.Split -= HandleCubeSplit;
         destroyedCube.Destroyed -= HandleCubeDestroyed;
+
+        _explosionForceHandler.ApplyExplosion(destroyedCube.transform.position);
 
         _activeCubes.Remove(destroyedCube);
     }
@@ -63,7 +66,7 @@ public class CubeSpawner : MonoBehaviour
 
             if (newCube.CubeRigidbody != null)
             {
-                _explosionForceHandler.ApplyExplosion(newCube.CubeRigidbody, position);
+                _explosionForceHandler.ApplyExplosion(position);
             }
 
             newCube.Initialize(newSplitChance);

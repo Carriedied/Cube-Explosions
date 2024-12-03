@@ -2,16 +2,22 @@ using UnityEngine;
 
 public class ExplosionForce : MonoBehaviour
 {
-    [SerializeField] private float _force = 100f;
-    [SerializeField] private float _radius = 5f;
+    private float _force = 100;
+    private float _radius = 5;
 
-    public void ApplyExplosion(Rigidbody rigidbody, Vector3 explosionCenter)
+    public void ApplyExplosion(Vector3 explosionCenter)
     {
-        if (rigidbody == null) return;
+        Collider[] _overlappedColliders = Physics.OverlapSphere(explosionCenter, _radius);
+        Rigidbody rigidbody;
 
-        Vector3 randomPoint = explosionCenter + Random.onUnitSphere * _radius;
-        Vector3 forceDirection = (randomPoint - explosionCenter).normalized;
+        for (int i = 0; i < _overlappedColliders.Length; i++)
+        {
+            rigidbody = _overlappedColliders[i].attachedRigidbody;
 
-        rigidbody.AddForceAtPosition(forceDirection * _force, randomPoint);
+            if (rigidbody)
+            {
+                rigidbody.AddExplosionForce(_force, explosionCenter, _radius);
+            }
+        }
     }
 }
