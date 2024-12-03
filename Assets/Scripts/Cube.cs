@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Cube : MonoBehaviour
@@ -6,10 +7,15 @@ public class Cube : MonoBehaviour
     [SerializeField] private int _decreaseValue = 2;
     [SerializeField] private int _decreaseChance = 2;
 
-    public event System.Action<Cube> OnDestroyed;
+    public float SplitChance => _splitChance;
+    public int DecreaseValue => _decreaseValue;
+    public int DecreaseChance => _decreaseChance;
 
-    public Renderer CubeRenderer;
-    public Rigidbody CubeRigidbody;
+    public event Action<Cube> Split;
+    public event Action<Cube> Destroyed;
+
+    public Renderer CubeRenderer { get; private set; }
+    public Rigidbody CubeRigidbody { get; private set; }
 
     private void Awake()
     {
@@ -19,13 +25,13 @@ public class Cube : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (Random.value <= _splitChance)
+        if (UnityEngine.Random.value <= _splitChance)
         {
-            Split();
+            TriggerSplit();
         }
         else
         {
-            NotifyAndDestroy();
+            DestroySelf();
         }
     }
 
@@ -34,27 +40,15 @@ public class Cube : MonoBehaviour
         _splitChance = splitChance;
     }
 
-    private void Split()
+    private void TriggerSplit()
     {
-        Vector3 position = transform.position;
-        Vector3 newScale = transform.localScale / _decreaseValue;
-
-        float newSplitChance = _splitChance / _decreaseChance;
-
-        CubeSpawner cubeSpawner = FindFirstObjectByType<CubeSpawner>();
-
-        if (cubeSpawner != null)
-        {
-            cubeSpawner.SpawnCubes(position, newScale, newSplitChance);
-        }
-
-        NotifyAndDestroy();
+        Split?.Invoke(this);
+        Destroy(gameObject);
     }
 
-    private void NotifyAndDestroy()
+    private void DestroySelf()
     {
-        OnDestroyed?.Invoke(this);
+        Destroyed?.Invoke(this);
         Destroy(gameObject);
     }
 }
-
