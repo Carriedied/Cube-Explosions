@@ -62,9 +62,9 @@ public class CubeSpawner : MonoBehaviour
             Cube newCube = Instantiate(_cubePrefab, position, Random.rotation);
 
             newCube.transform.localScale = newScale;
-            newCube.CubeRenderer.material.color = new Color(Random.value, Random.value, Random.value);
+            newCube.ChoiceCubeColor.material.color = new Color(Random.value, Random.value, Random.value);
 
-            if (newCube.CubeRigidbody != null)
+            if (newCube.CubePhysicsComponent != null)
             {
                 _explosionForceHandler.ApplyExplosion(position);
             }

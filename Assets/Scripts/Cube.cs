@@ -1,31 +1,29 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(Renderer))]
+[RequireComponent(typeof(Rigidbody))]
 public class Cube : MonoBehaviour
 {
-    [SerializeField] private float _splitChance = 1.0f;
-    [SerializeField] private int _decreaseValue = 2;
-    [SerializeField] private int _decreaseChance = 2;
-
-    public float SplitChance => _splitChance;
-    public int DecreaseValue => _decreaseValue;
-    public int DecreaseChance => _decreaseChance;
-
     public event Action<Cube> Split;
     public event Action<Cube> Destroyed;
 
-    public Renderer CubeRenderer { get; private set; }
-    public Rigidbody CubeRigidbody { get; private set; }
+    [field:SerializeField] public float SplitChance { get; private set; } = 1.0f;
+    [field:SerializeField] public int DecreaseValue { get; private set; } = 2;
+    [field:SerializeField] public int DecreaseChance { get; private set; } = 2;
+
+    public Renderer ChoiceCubeColor { get; private set; }
+    public Rigidbody CubePhysicsComponent { get; private set; }
 
     private void Awake()
     {
-        CubeRenderer = GetComponent<Renderer>();
-        CubeRigidbody = GetComponent<Rigidbody>();
+        ChoiceCubeColor = GetComponent<Renderer>();
+        CubePhysicsComponent = GetComponent<Rigidbody>();
     }
 
     private void OnMouseDown()
     {
-        if (UnityEngine.Random.value <= _splitChance)
+        if (UnityEngine.Random.value <= SplitChance)
         {
             TriggerSplit();
         }
@@ -37,7 +35,7 @@ public class Cube : MonoBehaviour
 
     public void Initialize(float splitChance)
     {
-        _splitChance = splitChance;
+        SplitChance = splitChance;
     }
 
     private void TriggerSplit()
